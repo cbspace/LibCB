@@ -1,24 +1,67 @@
-// A simple tree structure
-// Does not support deletion of nodes
-
 #pragma once
+#include <vector>
+#include <memory>
+#include <string>
 
-#include "TreeNode.h"
-#include "web/WebElement.h"
+#include <iostream>
 
-namespace CBLib {
+namespace LibCB {
 
-class Tree
-{
-public:
-    Tree();
-    TreeNode* get_primary();
-    TreeNode* create_node_under(TreeNode* parent, WebElement payload_in);
+class TreeNode {
+    public:
+        std::string contents;
+        std::shared_ptr<TreeNode> child1 = nullptr;
+        std::shared_ptr<TreeNode> child2 = nullptr;
 
-private:
-    TreeNode primary_node;
+        TreeNode(std::string contents) {
+            this->contents = contents;
+        }
+
+        void visit() {std::cout << this->contents << std::endl;}
 };
-    
+
+class Tree {
+    public:
+        std::shared_ptr<TreeNode> root = nullptr;
+
+        Tree(std::string contents) {
+            this->root = std::make_shared<TreeNode>(contents);
+        }
+
+        void traverse(const std::string order="order") {
+            if (order == "order") {
+                in_order_traversal(root);
+            } else if (order == "pre") {
+                pre_order_traversal(root);
+            }   else if (order == "post") {
+                post_order_traversal(root);
+            }
+        }
+
+    private:
+        void in_order_traversal(std::shared_ptr<TreeNode> node) {
+            if (node != nullptr) {
+                in_order_traversal(node->child1);
+                node->visit();
+                in_order_traversal(node->child2);
+            }
+        }
+
+        void pre_order_traversal(std::shared_ptr<TreeNode> node) {
+            if (node != nullptr) {
+                node->visit();
+                pre_order_traversal(node->child1);
+                pre_order_traversal(node->child2);
+            }
+        }
+
+        void post_order_traversal(std::shared_ptr<TreeNode> node) {
+            if (node != nullptr) {
+                post_order_traversal(node->child1);
+                post_order_traversal(node->child2);
+                node->visit();
+            }
+        } 
 };
 
-using CBLib::Tree;
+};
